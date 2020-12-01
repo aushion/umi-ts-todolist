@@ -41,19 +41,19 @@ const IndexModel: IndexModelType = {
   },
 
   effects: {
-    *query({ payload }, { call, put, select }) {
-      const res = yield call(getTodoList, payload)
+    *query({ payload }, { call, put }) {
+  const res = yield call(getTodoList, payload);
 
-      if (res.code === 200) {
-        yield put({
-          type: 'save',
-          payload: {
-            data: res.result.data,
-            pageInfo: res.result.pageInfo
-          }
-        })
-      }
-    },
+  if (res.code === 200) {
+    yield put({
+      type: 'save',
+      payload: {
+        data: res.result.data,
+        pageInfo: res.result.pageInfo } });
+
+
+  }
+},
     *add({ payload }, { call, put, select }) {
       const res = yield call(addTodoItem, payload)
       const { pageInfo } = yield select((state: { index: IndexModelState; }) => state.index)
@@ -114,7 +114,7 @@ const IndexModel: IndexModelType = {
           dispatch({
             type: 'query',
             payload: {
-              pageSize: 5,
+              pageSize: 10,
               pageIndex: 1,
             }
           })

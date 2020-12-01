@@ -214,7 +214,7 @@ const IndexPage: ConnectRC<PageProps> = ({ index, loading, dispatch }) => {
         type: 'index/query',
         payload: {
           ...data,
-          pageSize: 5,
+          pageSize: 10,
           pageIndex: 1,
         },
       });
@@ -225,33 +225,30 @@ const IndexPage: ConnectRC<PageProps> = ({ index, loading, dispatch }) => {
     {
       title: '标题',
       dataIndex: 'title',
-      width: '15%',
+      // ellipsis: true,
     },
     {
       title: '详情',
       dataIndex: 'detail',
-      width: '40%',
+      // ellipsis: true
     },
     {
       title: '状态',
       dataIndex: 'status',
-      width: '10%',
       render: (t: string, r: Item) => statusMap.get(r.status),
     },
     {
       title: '时间',
-      width: '15%',
-      dataIndex: 'createdAt',
+      dataIndex: 'updatedAt',
       render: (t: string) => (
         <span>{dayjs(t).format('YYYY-MM-DD HH:mm:ss')}</span>
       ),
     },
     {
       title: '操作',
-      width: '15%',
       render: (t: string, r: Item) => {
         return (
-          <div>
+          <>
             <Button
               type="link"
               onClick={() => {
@@ -270,58 +267,54 @@ const IndexPage: ConnectRC<PageProps> = ({ index, loading, dispatch }) => {
             >
               删除
             </Button>
-          </div>
+          </>
         );
       },
     },
   ];
   return (
-    <Layout>
+    <Layout className={styles.layout}>
       <Header className={styles.header}>Easy TodoList</Header>
       <Content className={styles.content}>
         <Row gutter={24}>
-          <Col span={8}>
-            <Button
-              type="primary"
-              onClick={() => {
-                setVisible(true);
-                setInitialValue({ title: '', detail: '', status: 0 });
-              }}
-            >
-              新增
-            </Button>
-          </Col>
-          <Col span={16}>
-            <Form
-              form={form}
-              style={{ display: 'flex', justifyContent: 'flex-end' }}
-            >
-              <Form.Item name="status">
-                <Select
-                  style={{ width: 120, marginRight: 16 }}
-                  onChange={submit}
-                >
+          <Col md={16} xs={24} style={{ paddingBottom: 20 }}>
+            <Form form={form} layout="inline">
+              <Form.Item name="status" label="状态" initialValue="">
+                <Select onChange={submit}>
                   <Option value="">全部</Option>
                   <Option value={0}>未开始</Option>
                   <Option value={1}>进行中</Option>
                   <Option value={2}>已完成</Option>
                 </Select>
               </Form.Item>
-              <Form.Item name="title">
-                <Input.Search
-                  onSearch={submit}
-                  placeholder="输入标题关键字"
-                  style={{ width: 240 }}
-                />
+              <Form.Item name="title" label="标题">
+                <Input.Search onSearch={submit} placeholder="输入标题关键字" />
               </Form.Item>
             </Form>
+          </Col>
+          <Col
+            md={8}
+            xs={24}
+            style={{ display: 'flex', alignItems: 'flex-end' }}
+          >
+            <Form.Item>
+              <Button
+                type="primary"
+                onClick={() => {
+                  setVisible(true);
+                  setInitialValue({ title: '', detail: '', status: 0 });
+                }}
+              >
+                新增
+              </Button>
+            </Form.Item>
           </Col>
         </Row>
 
         <Divider style={{ borderTop: '1px solid #1DA57A' }} />
         <Table
           bordered
-          size="large"
+          size="small"
           loading={loading}
           dataSource={data}
           pagination={{
@@ -329,6 +322,7 @@ const IndexPage: ConnectRC<PageProps> = ({ index, loading, dispatch }) => {
             total: pageInfo.total,
             current: pageInfo.pageIndex,
             onChange: onChange,
+            hideOnSinglePage: true,
           }}
           columns={columns}
           rowKey="id"
